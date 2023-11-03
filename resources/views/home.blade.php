@@ -3,6 +3,15 @@
 @section('title', 'Pagrindinis Puslapis')
 
 @section('content')
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="max-w-md mx-auto bg-gray-100 shadow-lg rounded-md overflow-hidden card-ticket">
     <div class="primary-bg-color text-white p-4 flex justify-between">
         <div class="font-bold text-lg">Lottery Ticket</div>

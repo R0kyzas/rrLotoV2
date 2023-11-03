@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreOrderRequest;
 use App\Models\Discount;
 use App\Models\Order;
+use App\Models\Ticket;
 use App\Models\TicketPrice;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -43,13 +44,23 @@ class TicketController extends Controller
                     $finalAmount *= (1 - $isValidDiscount->percentage / 100);
                 }
     
-                Order::create([
+                $order = Order::create([
                     $request->validated(),
                     'ticket_quantity' => $request->ticket_quantity,
                     'order_nr' => $this->getRandomOrderNumber(),
                     'final_price' => $finalAmount * 100,
                     'payment_method' => $request->payment_method,
+                    'first_name' => $request->first_name,
+                    'last_name' => $request->last_name,
+                    'token' => json_decode($request->cookie('userToken'), true),
                 ]);
+
+                for ($i=0; $i < $request->ticket_quantity; $i++) {
+                    Ticket::create([
+                        'order_id' => $order->id,
+                        'ticket_number' => $this->generateUniqueTicketNumber(),
+                    ]);  
+                }
 
                 $cookieData = [
                     'first_name' => $request->first_name,
@@ -64,7 +75,7 @@ class TicketController extends Controller
                     ->cookie($cookie)
                 ;
             } catch (\Throwable $th) {
-                return back()->withInput()->withErrors(['error' => 'Įvyko klaida. Bandykite dar kartą.']);
+                return back()->withInput()->withErrors(['error' => $th]);
             }
     }
 
@@ -75,6 +86,16 @@ class TicketController extends Controller
         } while (Order::where("order_nr", "=", $orderNumber)->first());
         
         return $orderNumber;
+    }
+
+
+    public function generateUniqueTicketNumber()
+    {
+        do {
+            $ticketRandomNumber = random_int(1, 9999);
+        } while (Ticket::where("ticket_number", "=", $ticketRandomNumber)->first());
+  
+        return $ticketRandomNumber;
     }
 
     public function applyDiscount(Request $request)

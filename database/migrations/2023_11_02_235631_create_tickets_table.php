@@ -14,9 +14,6 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('order_id')->constrained();
-            $table->string('name');
-            $table->string('lastname');
-            $table->string('token');
             $table->integer('ticket_number')->unique();
             $table->timestamps();
         });

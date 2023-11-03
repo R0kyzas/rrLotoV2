@@ -14,6 +14,8 @@ class Order extends Model
     protected $fillable = [
         'active',
         'order_nr',
+        'first_name',
+        'last_name',
         'ticket_quantity',
         'cancel_reason',
         'final_price',

@@ -16,10 +16,12 @@ return new class extends Migration
             $table->boolean('active')->default(0);
             $table->boolean('payment_method');
             $table->integer('ticket_quantity');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('order_nr')->unique();
             $table->string('cancel_reason', 255)->nullable(true);
             $table->integer('final_price');
-            $table->uuid('token')->unique();
+            $table->uuid('token');
             $table->timestamps();
         });
     }

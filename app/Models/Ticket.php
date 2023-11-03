@@ -11,8 +11,6 @@ class Ticket extends Model
     use HasUuids, HasFactory;
 
     protected $fillable = [
-        'name',
-        'lastname',
         'order_id',
         'ticket_number',
     ];
@@ -20,10 +18,5 @@ class Ticket extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
-    }
-
-    public function winner()
-    {
-        return $this->hasOne(Winner::class, 'ticket_id');
     }
 }
