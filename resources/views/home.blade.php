@@ -18,7 +18,7 @@
         <div class="text-lg"><i class="fab fa-cc-visa"></i></div>
     </div>
     <div class="p-6">
-        <form action="{{ route('store.ticket') }}" method="POST">
+        <form action="{{ route('store.ticket') }}" method="POST" id="supportTicketForm">
             @csrf
             <div class="mb-4">
                 <label class="block text-gray-700 font-bold mb-2" for="first_name">
@@ -30,7 +30,7 @@
                     name="first_name"
                     type="text"
                     placeholder="Enter your first name"
-                    value="{{ old('first_name', $userData['first_name'] ?? '') }}"
+                    value="{{ old('first_name') }}"
                 >
                 @error('first_name')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -46,7 +46,7 @@
                     type="text"
                     name="last_name"
                     placeholder="Enter your last name"
-                    value="{{ old('first_name', $userData['last_name'] ?? '') }}"
+                    value="{{ old('last_name') }}"
                 >
                 @error('last_name')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -98,18 +98,18 @@
                         value="0" 
                         name="payment_method" 
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                        @if(isset($userData['payment_method']) && $userData['payment_method'] == 0) checked @endif
+                        {{ old('payment_method') == '0' ? 'checked' : '' }}
                     >
                     <label for="bank" class="ml-2 text-sm font-medium">Paysera</label>
                 </div>
                 <div class="flex items-center">
                     <input 
-                        @if(isset($userData['payment_method']) && $userData['payment_method'] == 1) checked @endif
                         id="cash" 
                         type="radio" 
                         value="1" 
                         name="payment_method" 
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                        {{ old('payment_method') == '1' ? 'checked' : '' }}
                     >
                     <label for="cash" class="ml-2 text-sm font-medium">Cash</label>
                 </div>
@@ -202,6 +202,43 @@
                 document.getElementById('price').removeChild(document.getElementById('price').firstChild);
             }
         }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        let userDataCookie = getCookie('userData');
+
+        if(userDataCookie){
+            let userData = JSON.parse(decodeURIComponent(userDataCookie));
+
+            document.getElementById('first_name').value = userData.firstName;
+            document.getElementById('last_name').value = userData.lastName;
+        }
+
+    });
+
+    function getCookie(name) {
+        let value = "; " + document.cookie;
+        let parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+        const d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        let expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    document.getElementById('supportTicketForm').addEventListener('submit', function() {
+        let userData = {
+            firstName: document.getElementById('first_name').value,
+            lastName: document.getElementById('last_name').value,
+        };
+
+        let encodedUserData = encodeURIComponent(JSON.stringify(userData));
+
+        let expirationDate = new Date();
+        setCookie('userData', encodedUserData, expirationDate.setFullYear(expirationDate.getFullYear() + 1));
     });
 </script>
 @endsection

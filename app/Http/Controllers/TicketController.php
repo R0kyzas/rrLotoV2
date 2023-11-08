@@ -2,35 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PaymentType;
 use App\Http\Requests\StoreOrderRequest;
 use App\Models\Discount;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Models\TicketPrice;
-use Carbon\Carbon;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cookie;
 
 class TicketController extends Controller
 {
-    public function create(Request $request): View
+    public function create(): View
     {
         $ticketPrice = TicketPrice::first();
 
-        $userData = json_decode($request->cookie('userData'), true);
-
         return view('home', [
             'ticketPrice' => $ticketPrice->price,
-            'userData' => $userData,
         ]);
     }
 
-    public function store(StoreOrderRequest $request): RedirectResponse
+    public function store(StoreOrderRequest $request, PaymentController $paymentController)
     {
-            try {
+            // try {
                 $ticketPrice = TicketPrice::first();
     
                 $discountCode = $request->input('discount');
@@ -61,22 +56,20 @@ class TicketController extends Controller
                         'ticket_number' => $this->generateUniqueTicketNumber(),
                     ]);  
                 }
-
-                $cookieData = [
-                    'first_name' => $request->first_name,
-                    'last_name' => $request->last_name,
-                    'payment_method' => $request->payment_method,
-                ];
-                $cookie = Cookie::make('userData', json_encode($cookieData), Carbon::now()->addYear()->timestamp);
     
-                return redirect()
-                    ->route('profile')
-                    ->with('success', 'Duomenys sėkmingai įrašyti!')
-                    ->cookie($cookie)
-                ;
-            } catch (\Throwable $th) {
-                return back()->withInput()->withErrors(['error' => $th]);
-            }
+                if(intval($request->payment_method) === PaymentType::Paysera)
+                {
+                    $paymentController->initiatePayment($order->id);
+                }else{
+                    return redirect()
+                        ->route('profile')
+                        ->with('success', 'Duomenys sėkmingai įrašyti!')
+                    ;
+                }
+
+            // } catch (\Throwable $th) {
+            //     return back()->withInput()->withErrors(['error' => 'error']);
+            // }
     }
 
     public function getRandomOrderNumber()
