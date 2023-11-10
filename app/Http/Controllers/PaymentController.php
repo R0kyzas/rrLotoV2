@@ -69,9 +69,9 @@ class PaymentController extends Controller
                 'transactionId' => $orderId,
                 'amount' => '10.00',
                 'currency' => 'EUR',
-                'returnUrl' => secure_url("/profile"),
-                'cancelUrl' => secure_url("/cancel"),
-                'notifyUrl' => secure_url("/paysera/notification"),
+                'returnUrl' => url("/profile"),
+                'cancelUrl' => url("/cancel"),
+                'notifyUrl' => url("/paysera/notification"),
             ]
         )->send();
 
@@ -91,13 +91,16 @@ class PaymentController extends Controller
                         "fd5956c1f89f6cd9a4a52f523c05cbfc",
                     );
                  
-                    // dd($response['orderid']);
                     if ($response['status'] === '1' || $response['status'] === '3') {
-                        //@ToDo: Validate payment amount and currency, example provided in isPaymentValid method.
-                        //@ToDo: Validate order status by $response['orderid']. If it is not already approved, approve it.
                         $order = Order::where("id", "=", $response['orderid'])->first();
-                        $order->active = 1;
-                        $order->save();
+                        
+                        $isPaymentValid = $this->isPaymentValid($order, $response);
+
+                        if($isPaymentValid)
+                        {
+                            $order->active = 1;
+                            $order->save();
+                        }
                         echo 'OK';
                     } else {
                         echo 'Payment was not successful';
@@ -105,5 +108,20 @@ class PaymentController extends Controller
                 } catch (\Throwable $exception) {
                     echo get_class($exception) . ':' . $exception->getMessage();
                 }
+    }
+
+    function isPaymentValid(array $order, array $response): bool
+    {
+        if (array_key_exists('payamount', $response) === false) {
+            if ($order['final_price'] !== $response['amount']) {
+                throw new \Throwable('Wrong payment amount');
+            }
+        } else {
+            if ($order['final_price'] !== $response['payamount']) {
+                throw new \Throwable('Wrong payment amount');
+            }
+        }
+    
+        return true;
     }
 }
