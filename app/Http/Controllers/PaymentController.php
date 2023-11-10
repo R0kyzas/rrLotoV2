@@ -69,9 +69,9 @@ class PaymentController extends Controller
                 'transactionId' => $orderId,
                 'amount' => '10.00',
                 'currency' => 'EUR',
-                'returnUrl' => url("/profile"),
-                'cancelUrl' => url("/cancel"),
-                'notifyUrl' => url("/paysera/notification"),
+                'returnUrl' => secure_url("/profile"),
+                'cancelUrl' => secure_url("/cancel"),
+                'notifyUrl' => secure_url("/paysera/notification"),
             ]
         )->send();
 
@@ -94,14 +94,17 @@ class PaymentController extends Controller
                     if ($response['status'] === '1' || $response['status'] === '3') {
                         $order = Order::where("id", "=", $response['orderid'])->first();
                         
-                        $isPaymentValid = $this->isPaymentValid($order, $response);
-
-                        if($isPaymentValid)
+                        if($order)
                         {
-                            $order->active = 1;
-                            $order->save();
+                            $isPaymentValid = $this->isPaymentValid($order->toArray(), $response);
+                            if($isPaymentValid)
+                            {
+                                $order->active = 1;
+                                $order->save();
+
+                                echo 'OK';
+                            }
                         }
-                        echo 'OK';
                     } else {
                         echo 'Payment was not successful';
                     }
