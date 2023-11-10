@@ -69,9 +69,9 @@ class PaymentController extends Controller
                 'transactionId' => $orderId,
                 'amount' => '10.00',
                 'currency' => 'EUR',
-                'returnUrl' => "http://rrloto.test/paysera/notification",
-                'cancelUrl' => "http://rrloto.test/cancel",
-                'notifyUrl' => "http://rrloto.test/paysera/notification",
+                'returnUrl' => secure_url("/profile"),
+                'cancelUrl' => secure_url("/cancel"),
+                'notifyUrl' => secure_url("/paysera/notification"),
             ]
         )->send();
 
@@ -91,10 +91,13 @@ class PaymentController extends Controller
                         "fd5956c1f89f6cd9a4a52f523c05cbfc",
                     );
                  
+                    // dd($response['orderid']);
                     if ($response['status'] === '1' || $response['status'] === '3') {
                         //@ToDo: Validate payment amount and currency, example provided in isPaymentValid method.
                         //@ToDo: Validate order status by $response['orderid']. If it is not already approved, approve it.
-                 
+                        $order = Order::where("id", "=", $response['orderid'])->first();
+                        $order->active = 1;
+                        $order->save();
                         echo 'OK';
                     } else {
                         echo 'Payment was not successful';

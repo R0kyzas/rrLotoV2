@@ -28,7 +28,8 @@ Route::middleware(CheckUserTokenMiddleware::class)->get('/profile', [UserControl
 
 Route::prefix('/profile')->middleware(CheckUserTokenMiddleware::class)->group(function(){
     Route::get('/', [UserController::class, 'view'])->name('profile');
-    Route::match(['get', 'post'], '/payment/completed/{orderId}', [PaymentController::class, 'processPayment']);
+    Route::get('/profile/paid', [PaymentController::class, 'view'])->name('initiatePayment');
+    // Route::match(['get', 'post'], '/payment/completed/{orderId}', [PaymentController::class, 'processPayment']);
     // Route::match(['get', 'post'], '/payment-return/{orderId}/', [PaymentController::class, 'processPayment'])->name('profile.payment');
 });
 
