@@ -21,7 +21,7 @@
                             @if ($order->active === 0)
                                 <span class="text-warning">Waiting for activation</span>
                             @elseif ($order->active === 1)
-                                <span class="text-success">Actived</span>
+                                <span class="text-success">Activeded</span>
                             @elseif ($order->active === 2)
                                 <span class="text-danger">Canceled</span>
                             @endif
@@ -29,11 +29,12 @@
                         <div class="dropdown-item">
                             Ticket numbers:
                             @if($order->tickets->isNotEmpty())
-                                <ul>
-                                    @foreach($order->tickets as $ticket)
-                                        <li> #{{ $ticket->ticket_number }}</li>
-                                    @endforeach
-                                </ul>
+                                @foreach($order->tickets as $ticket)
+                                    #{{ $ticket->ticket_number }}
+                                    @if (!$loop->last)
+                                        ,
+                                    @endif
+                                @endforeach
                             @else
                                 <p>No tickets for this order.</p>
                             @endif   
