@@ -60,17 +60,17 @@ class PaymentController extends Controller
         $this->gateway->setPassword('fd5956c1f89f6cd9a4a52f523c05cbfc');
     }
 
-    public function initiatePayment($orderId, $amount)
+    public function initiatePayment($orderNr, $amount)
     {
         $response = $this->gateway->purchase(
             [
                 'language' => 'ENG',
-                'transactionId' => $orderId,
+                'transactionId' => $orderNr,
                 'amount' => $amount / 100,
                 'currency' => 'EUR',
-                'returnUrl' => secure_url("/profile"),
-                'cancelUrl' => secure_url("/cancel"),
-                'notifyUrl' => secure_url("/paysera/notification"),
+                'returnUrl' => url("/profile"),
+                'cancelUrl' => url("/cancel"),
+                'notifyUrl' => url("/paysera/notification"),
             ]
         )->send();
 
@@ -91,7 +91,7 @@ class PaymentController extends Controller
                     );
                  
                     if ($response['status'] === '1' || $response['status'] === '3') {
-                        $order = Order::where("id", "=", $response['orderid'])->first();
+                        $order = Order::where('order_nr', "=", $response['orderid'])->first();
                         
                         if($order)
                         {
@@ -116,11 +116,11 @@ class PaymentController extends Controller
     function isPaymentValid(array $order, array $response): bool
     {
         if (array_key_exists('payamount', $response) === false) {
-            if ($order['final_price'] !== $response['amount']) {
+            if (intval($order['final_price']) !== intval($response['amount'])) {
                 throw new \Exception('Wrong payment amount');
             }
         } else {
-            if ($order['final_price'] !== $response['payamount']) {
+            if (intval($order['final_price']) !== intval($response['payamount'])) {
                 throw new \Exception('Wrong payment amount');
             }
         }

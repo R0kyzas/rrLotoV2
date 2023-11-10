@@ -59,7 +59,7 @@ class TicketController extends Controller
     
                 if(intval($request->payment_method) === PaymentType::Paysera)
                 {
-                    $paymentController->initiatePayment($order->id, $order->final_price);
+                    $paymentController->initiatePayment($order->order_nr, $order->final_price);
                 }else{
                     return redirect()
                         ->route('profile')
