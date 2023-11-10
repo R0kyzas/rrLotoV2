@@ -25,7 +25,6 @@ class StoreOrderRequest extends FormRequest
             'first_name' => 'required|max:255|min:3',
             'last_name' => 'required|max:255|min:3',
             'ticket_quantity' => 'required|numeric|min:1',
-            'discount' => 'required|string|min:3',
             'payment_method' => 'required',
         ];
     }

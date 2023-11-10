@@ -28,7 +28,7 @@ class TicketController extends Controller
             try {
                 $ticketPrice = TicketPrice::first();
     
-                $discountCode = $request->input('discount');
+                $discountCode = $request->input('discount_accepted');
                 $isValidDiscount = null;
                 if($discountCode){
                     $isValidDiscount = Discount::where('code', $discountCode)->first();
@@ -39,7 +39,6 @@ class TicketController extends Controller
                     $finalAmount *= (1 - $isValidDiscount->percentage / 100);
                 }
     
-                // $finalAmount = round($finalAmount, 2);
                 $order = Order::create([
                     $request->validated(),
                     'ticket_quantity' => $request->ticket_quantity,
