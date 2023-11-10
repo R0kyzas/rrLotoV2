@@ -60,13 +60,13 @@ class PaymentController extends Controller
         $this->gateway->setPassword('fd5956c1f89f6cd9a4a52f523c05cbfc');
     }
 
-    public function initiatePayment($orderId)
+    public function initiatePayment($orderId, $amount)
     {
         $response = $this->gateway->purchase(
             [
                 'language' => 'ENG',
                 'transactionId' => $orderId,
-                'amount' => '10.00',
+                'amount' => $amount,
                 'currency' => 'EUR',
                 'returnUrl' => secure_url("/profile"),
                 'cancelUrl' => secure_url("/cancel"),
@@ -96,6 +96,7 @@ class PaymentController extends Controller
                         if($order)
                         {
                             $isPaymentValid = $this->isPaymentValid($order->toArray(), $response);
+
                             if($isPaymentValid)
                             {
                                 $order->active = 1;

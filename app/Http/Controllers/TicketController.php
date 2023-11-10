@@ -25,7 +25,7 @@ class TicketController extends Controller
 
     public function store(StoreOrderRequest $request, PaymentController $paymentController)
     {
-            // try {
+            try {
                 $ticketPrice = TicketPrice::first();
     
                 $discountCode = $request->input('discount');
@@ -59,7 +59,7 @@ class TicketController extends Controller
     
                 if(intval($request->payment_method) === PaymentType::Paysera)
                 {
-                    $paymentController->initiatePayment($order->id);
+                    $paymentController->initiatePayment($order->id, $order->final_price);
                 }else{
                     return redirect()
                         ->route('profile')
@@ -67,9 +67,9 @@ class TicketController extends Controller
                     ;
                 }
 
-            // } catch (\Throwable $th) {
-            //     return back()->withInput()->withErrors(['error' => 'error']);
-            // }
+            } catch (\Throwable $th) {
+                return back()->withInput()->withErrors(['error' => 'error']);
+            }
     }
 
     public function getRandomOrderNumber()
