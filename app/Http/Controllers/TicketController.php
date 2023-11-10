@@ -60,10 +60,12 @@ class TicketController extends Controller
                 if(intval($request->payment_method) === PaymentType::Paysera)
                 {
                     $paymentController->initiatePayment($order->order_nr, $order->final_price);
+                    $isValidDiscount->delete();
                 }else{
+                    $isValidDiscount->delete();
                     return redirect()
                         ->route('profile')
-                        ->with('success', 'Duomenys sėkmingai įrašyti!')
+                        ->with('success', 'Order created successfully !')
                     ;
                 }
 

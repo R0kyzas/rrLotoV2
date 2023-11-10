@@ -42,33 +42,31 @@ class PaymentController extends Controller
     public function handleNotification(Request $request)
     {
         try {
-                    $response = WebToPay::validateAndParseData(
-                        $request->all(),
-                        239986,
-                        "fd5956c1f89f6cd9a4a52f523c05cbfc",
-                    );
+            $response = WebToPay::validateAndParseData(
+                $request->all(),
+                239986,
+                "fd5956c1f89f6cd9a4a52f523c05cbfc",
+            );
                  
-                    if ($response['status'] === '1' || $response['status'] === '3') {
-                        $order = Order::where('order_nr', "=", $response['orderid'])->first();
-                        
-                        if($order)
-                        {
-                            $isPaymentValid = $this->isPaymentValid($order->toArray(), $response);
+            if ($response['status'] === '1' || $response['status'] === '3') {
+                $order = Order::where('order_nr', "=", $response['orderid'])->first(); 
+                
+                if($order){
+                    $isPaymentValid = $this->isPaymentValid($order->toArray(), $response);
 
-                            if($isPaymentValid)
-                            {
-                                $order->active = 1;
-                                $order->save();
+                    if($isPaymentValid){
+                        $order->active = 1;
+                        $order->save();
 
-                                echo 'OK';
-                            }
-                        }
-                    } else {
-                        echo 'Payment was not successful';
+                        echo 'OK';
                     }
-                } catch (\Throwable $exception) {
-                    echo get_class($exception) . ':' . $exception->getMessage();
                 }
+            } else {
+                echo 'Payment was not successful';
+            }
+        } catch (\Throwable $exception) {
+            echo get_class($exception) . ':' . $exception->getMessage();
+        }
     }
 
     function isPaymentValid(array $order, array $response): bool
