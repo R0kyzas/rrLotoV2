@@ -157,7 +157,6 @@
             .then(response => response.json())
             .then(data => {
                 if (data) {
-                    console.log(data);
                     if(data.validDiscount.length > 0)
                     {
                         createAlert(discountResponse, "text-green-800", "Discount applied !", "bg-green-50");
