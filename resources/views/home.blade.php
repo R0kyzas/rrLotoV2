@@ -171,7 +171,7 @@
 
                         let newPriceMessage = document.createElement('div');
                         newPriceMessage.classList.add('mt-2');
-                        newPriceMessage.innerHTML = `Total price: <span class="line-through">${price} EUR</span><span class="font-bold text-base text-red-500"> ${discountedPrice} EUR`;
+                        newPriceMessage.innerHTML = `Total price: <span class="line-through">${price} EUR</span><span class="font-bold text-base text-red-500"> ${discountedPrice.toFixed(2)} EUR`;
                     
                         document.getElementById('price').appendChild(newPriceMessage);
                     }else{

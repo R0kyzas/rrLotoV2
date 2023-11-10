@@ -39,6 +39,7 @@ class TicketController extends Controller
                     $finalAmount *= (1 - $isValidDiscount->percentage / 100);
                 }
     
+                // $finalAmount = round($finalAmount, 2);
                 $order = Order::create([
                     $request->validated(),
                     'ticket_quantity' => $request->ticket_quantity,
