@@ -66,7 +66,7 @@ class PaymentController extends Controller
             [
                 'language' => 'ENG',
                 'transactionId' => $orderId,
-                'amount' => $amount,
+                'amount' => $amount / 100,
                 'currency' => 'EUR',
                 'returnUrl' => secure_url("/profile"),
                 'cancelUrl' => secure_url("/cancel"),
