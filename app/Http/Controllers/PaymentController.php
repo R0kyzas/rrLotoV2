@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
-use Omnipay\Common\GatewayFactory;
 use Omnipay\Omnipay;
 use WebToPay;
 
@@ -117,11 +116,11 @@ class PaymentController extends Controller
     {
         if (array_key_exists('payamount', $response) === false) {
             if ($order['final_price'] !== $response['amount']) {
-                throw new \Throwable('Wrong payment amount');
+                throw new \Exception('Wrong payment amount');
             }
         } else {
             if ($order['final_price'] !== $response['payamount']) {
-                throw new \Throwable('Wrong payment amount');
+                throw new \Exception('Wrong payment amount');
             }
         }
     
