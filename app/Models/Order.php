@@ -23,6 +23,24 @@ class Order extends Model
         'token',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        $isPoolExists = Pool::first();
+
+        if($isPoolExists)
+        {
+            static::updated(function ($order) {
+                if ($order->isDirty('active') && $order->active === 1) {
+                    $pool = Pool::first();
+                    $pool->collected_amount += $order->final_price;
+                    $pool->save();
+                }
+            });
+        }
+    }
+
     public function tickets()
     {
         return $this->hasMany(Ticket::class, 'order_id');

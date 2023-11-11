@@ -6,6 +6,7 @@ use App\Enums\PaymentType;
 use App\Http\Requests\StoreOrderRequest;
 use App\Models\Discount;
 use App\Models\Order;
+use App\Models\Pool;
 use App\Models\Ticket;
 use App\Models\TicketPrice;
 use Illuminate\Http\Request;
@@ -14,12 +15,20 @@ use Illuminate\Support\Str;
 
 class TicketController extends Controller
 {
+    public $pool;
+
+    public function __construct()
+    {
+        $this->pool = Pool::first();
+    }
+
     public function create(): View
     {
         $ticketPrice = TicketPrice::first();
 
         return view('home', [
             'ticketPrice' => $ticketPrice->price,
+            'pool' => $this->pool
         ]);
     }
 
@@ -51,26 +60,32 @@ class TicketController extends Controller
                 ]);
 
                 for ($i=0; $i < $request->ticket_quantity; $i++) {
-                    Ticket::create([
+                    $ticket = Ticket::create([
                         'order_id' => $order->id,
                         'ticket_number' => $this->generateUniqueTicketNumber(),
-                    ]);  
+                    ]);
                 }
     
                 if(intval($request->payment_method) === PaymentType::Paysera)
                 {
                     $paymentController->initiatePayment($order->order_nr, $order->final_price);
-                    $isValidDiscount->delete();
+                    if($isValidDiscount)
+                    {
+                        $isValidDiscount->delete();
+                    }
                 }else{
-                    $isValidDiscount->delete();
+                    if($isValidDiscount)
+                    {
+                        $isValidDiscount->delete();
+                    }
                     return redirect()
-                        ->route('profile')
-                        ->with('success', 'Order created successfully !')
+                        ->route('profile.view')
+                        ->with('success', 'Order completed successfully !')
                     ;
                 }
 
             } catch (\Throwable $th) {
-                return back()->withInput()->withErrors(['error' => 'error']);
+                return back()->withInput()->withErrors(['error' => 'Something wrong...']);
             }
     }
 

@@ -57,6 +57,7 @@ body {
 
 .primary-bg-color {
     background: #590000!important;
+    border-color: #590000!important;
 }
 
 .second-bg-color {
@@ -66,4 +67,20 @@ body {
 
 .second-text-color {
     color: #590000!important;
+}
+
+.dropdown-body-button {
+    padding: var(--mdb-dropdown-item-padding-y) var(--mdb-dropdown-item-padding-x);
+}
+
+.fixed-bottom {
+    z-index: 1!important;
+}
+
+.icon-item {
+    font-size: 1.5rem;
+}
+
+.alert {
+    margin-bottom: 0!important;
 }

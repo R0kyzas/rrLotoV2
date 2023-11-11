@@ -6,22 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class Ticket extends Model
+class Winner extends Model
 {
     use HasUuids, HasFactory;
 
     protected $fillable = [
-        'order_id',
-        'ticket_number',
+        'ticket_id',
     ];
 
-    public function order()
+    public function ticket()
     {
-        return $this->belongsTo(Order::class);
-    }
-
-    public function winner()
-    {
-        return $this->hasOne(Winner::class, 'ticket_id', 'id');
+        return $this->belongsTo(Ticket::class, 'ticket_id', 'id');
     }
 }
