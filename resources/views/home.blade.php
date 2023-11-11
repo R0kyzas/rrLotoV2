@@ -118,13 +118,79 @@
                 @enderror
             </div>
             <button
-                class="primary-bg-color w-full text-white py-2 px-4 rounded font-bold hover:bg-red-800 focus:outline-none focus:shadow-outline"
+            class="primary-bg-color w-full text-white py-2 px-4 rounded font-bold hover:bg-red-800 focus:outline-none focus:shadow-outline"
             >
-                Buy
+            Buy
+        </button>
+        
+        <div class="mt-4 d-flex justify-content-center">
+            <button type="button" data-mdb-toggle="modal" data-mdb-target="#termsModal">
+            Terms and Conditions
             </button>
-        </form>
-            </div>
         </div>
+        <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                                                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                            Terms and Conditions
+1. General Terms
+1.1. These Terms and Conditions (hereinafter referred to as "Terms") govern the conditions for the purchase and sale of goods or services between the Seller and the Buyer.
+
+1.2. All Buyer orders are processed in accordance with these Terms. The Buyer agrees to review and accept these Terms before placing an order.
+
+2. Orders
+2.1. The Buyer may place an order through the online store or other means provided by the Seller.
+
+2.2. The Buyer agrees to provide accurate and complete order information.
+
+2.3. The Seller reserves the right to reject or partially fulfill an order if the provided information is incorrect or incomplete.
+
+3. Prices and Payment
+3.1. All prices are listed on the online store and are subject to change without prior notice.
+
+3.2. The Buyer must pay the full amount for the ordered goods or services before their delivery or provision.
+
+4. Delivery
+4.1. The Seller undertakes to deliver the goods to the Buyer within the specified timeframe and using the selected delivery method.
+
+4.2. Delivery charges may be added to the total amount.
+
+5. Returns and Exchanges
+5.1. The Buyer has the right to return goods within 14 days of receiving them.
+
+5.2. Returned items must be undamaged, unused, and in their original packaging.
+
+5.3. The Seller reserves the right to reject returned goods that do not comply with these Terms.
+
+6. Privacy
+6.1. The Seller undertakes to protect and not disclose the Buyer's personal data obtained during transactions.
+
+6.2. The Seller may use personal data solely for the purpose of fulfilling the transaction.
+
+7. Liability
+7.1. The Seller is not responsible for any damage or loss incurred due to the Buyer's improper use or non-compliance with these Terms.
+
+7.2. All products and services are provided "as is," without any direct or implied warranties.
+
+8. Final Provisions
+8.1. These Terms are governed by the laws of the Republic of Lithuania.
+
+8.2. All disputes and disagreements between the Seller and the Buyer will be resolved through negotiations.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary" data-mdb-dismiss="modal">Okay</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+        </form>
+    </div>
+</div>
     </div>
 <script>
     document.getElementById('ticket_quantity').addEventListener('input', function() {
