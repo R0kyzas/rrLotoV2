@@ -127,95 +127,103 @@
         </div>
     </div>
 <script>
-    function createAlert(discountResponse, textColorClass, message, backgroundColorClass) {
-        while (discountResponse.firstChild) {
-            discountResponse.removeChild(discountResponse.firstChild);
-        }
-
-        let alert = document.createElement('div');
-            alert.classList.add('p-4', 'mb-4', 'mt-4', 'text-sm', textColorClass , 'rounded-lg', backgroundColorClass);
-            alert.setAttribute('role', 'alert');
-            alert.innerHTML = `<span class="font-medium">${message}</span>`;
-    
-        discountResponse.appendChild(alert);
-    }
-
-    function applyDiscount() {
-        let discountCode = document.getElementById('discount').value;
-        let discountResponse = document.getElementById('discountResponse');
-        let tickets = document.getElementById('ticket_quantity').value;
-
-        if(tickets.length > 0)
-        {
-
-            if(discountCode.length >= 3)
-            {
-    
-                fetch('/apply-discount', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ discount: discountCode })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data) {
-                        if(data.validDiscount.length > 0)
-                        {
-                            createAlert(discountResponse, "text-green-800", "Discount applied !", "bg-green-50");
-                            let quantity = parseInt(document.getElementById('ticket_quantity').value);
-                            let price = quantity * <?= $ticketPrice ?>;
-                            let discountedPrice = price - (price * (data.validDiscount[0].percentage / 100));
-                            
-                            while ( document.getElementById('price').firstChild) {
-                                document.getElementById('price').removeChild(document.getElementById('price').firstChild);
-                            }
-    
-                            let newPriceMessage = document.createElement('div');
-                            newPriceMessage.classList.add('mt-2');
-                            newPriceMessage.innerHTML = `Total price: <span class="line-through">${price} EUR</span><span class="font-bold text-base text-red-500"> ${discountedPrice.toFixed(2)} EUR`;
-                        
-                            document.getElementById('price').appendChild(newPriceMessage);
-    
-                            let hiddenInput = document.createElement('input');
-                            hiddenInput.type = 'hidden';
-                            hiddenInput.name = 'discount_accepted';
-                            hiddenInput.value = discountCode;
-                            document.getElementById('supportTicketForm').appendChild(hiddenInput);
-                        }else{
-                            createAlert(discountResponse, "text-red-800", "Discount code not found !", "bg-red-50");
-                        }
-                    } else {
-                        alert('Invalid coupon code');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            }else{
-                createAlert(discountResponse, "text-red-800", "The code must consist of at least 3 characters !", "bg-red-50");
-            }
-        }else {
-            createAlert(discountResponse, "text-red-800", "First enter the ticket amount !", "bg-red-50");
-        }
-    }
-
     document.getElementById('ticket_quantity').addEventListener('input', function() {
-        let quantity = parseInt(this.value);
-            if (!isNaN(quantity) && quantity > 0) {
-                let price = quantity * <?= $ticketPrice ?>; 
-
-                let priceMessage = document.createElement('div');
-                priceMessage.classList.add('mt-2');
-                priceMessage.innerHTML = `Total price: <span class="font-bold">${price} EUR</span>`;
-            
-                document.getElementById('price').appendChild(priceMessage);
-        } else {
-            while ( document.getElementById('price').firstChild) {
-                document.getElementById('price').removeChild(document.getElementById('price').firstChild);
-            }
+    let quantity = parseInt(this.value);
+    if (!isNaN(quantity) && quantity > 0) {
+        let price = quantity * <?= $ticketPrice ?>;
+        let discountedPrice = 0;
+        
+        while (document.getElementById('price').firstChild) {
+            document.getElementById('price').removeChild(document.getElementById('price').firstChild);
         }
-    });
+
+        let priceMessage = document.createElement('div');
+        priceMessage.classList.add('mt-2');
+
+        if (price >= 30) {
+            discountedPrice = price * 0.8;
+            priceMessage.innerHTML = `Total price: <span class="line-through">${price} EUR</span><span class="font-bold text-base text-red-500"> ${discountedPrice} EUR`;
+        } else {
+            priceMessage.innerHTML = `Total price: <span class="font-bold">${price} EUR</span>`;
+        }
+
+        document.getElementById('price').appendChild(priceMessage);
+    } else {
+        while (document.getElementById('price').firstChild) {
+            document.getElementById('price').removeChild(document.getElementById('price').firstChild);
+        }
+    }
+});
+
+function createAlert(discountResponse, textColorClass, message, backgroundColorClass) {
+    while (discountResponse.firstChild) {
+        discountResponse.removeChild(discountResponse.firstChild);
+    }
+
+    let alert = document.createElement('div');
+    alert.classList.add('p-4', 'mb-4', 'mt-4', 'text-sm', textColorClass , 'rounded-lg', backgroundColorClass);
+    alert.setAttribute('role', 'alert');
+    alert.innerHTML = `<span class="font-medium">${message}</span>`;
+
+    discountResponse.appendChild(alert);
+}
+
+function applyDiscount() {
+    let discountCode = document.getElementById('discount').value;
+    let discountResponse = document.getElementById('discountResponse');
+    let tickets = document.getElementById('ticket_quantity').value;
+    let price = parseInt(tickets) * <?= $ticketPrice ?>;  // Pakeičiau quantity į tickets
+
+    if (tickets.length > 0) {
+        if (discountCode.length >= 3) {
+            fetch('/apply-discount', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ discount: discountCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    if (data.validDiscount.length > 0) {
+                        createAlert(discountResponse, "text-green-800", "Discount applied !", "bg-green-50");
+                        let quantity = parseInt(document.getElementById('ticket_quantity').value);
+                        let discountedPrice = price - (price * (data.validDiscount[0].percentage / 100));
+
+                        while (document.getElementById('price').firstChild) {
+                            document.getElementById('price').removeChild(document.getElementById('price').firstChild);
+                        }
+
+                        let newPriceMessage = document.createElement('div');
+                        newPriceMessage.classList.add('mt-2');
+                        newPriceMessage.innerHTML = `Total price: <span class="line-through">${price} EUR</span><span class="font-bold text-base text-red-500"> ${discountedPrice.toFixed(2)} EUR`;
+
+                        document.getElementById('price').appendChild(newPriceMessage);
+
+                        let hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'discount_accepted';
+                        hiddenInput.value = discountCode;
+                        document.getElementById('supportTicketForm').appendChild(hiddenInput);
+                    } else {
+                        createAlert(discountResponse, "text-red-800", "Discount code not found !", "bg-red-50");
+                    }
+                } else {
+                    alert('Invalid coupon code');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        } else {
+            createAlert(discountResponse, "text-red-800", "The code must consist of at least 3 characters !", "bg-red-50");
+        }
+    } else {
+        createAlert(discountResponse, "text-red-800", "First enter the ticket amount !", "bg-red-50");
+    }
+}
+
+
 
     document.addEventListener('DOMContentLoaded', function() {
         let userDataCookie = getCookie('userData');
