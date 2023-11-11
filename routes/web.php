@@ -36,6 +36,7 @@ Route::group(['middleware' => 'guest'], function (){
         Route::get('/', [ProfileController::class, 'view'])->name('profile.view');
         Route::get('/profile/paid', [PaymentController::class, 'view'])->name('initiatePayment');
         Route::get('/tickets/{id}', [ProfileController::class, 'viewTickets'])->name('profile.tickets');
+        Route::get('/cancel/{id}', [PaymentController::class, 'cancelOrder'])->name('profile.cancel');
     });
     
     Route::prefix('/winners')->middleware(CheckUserTokenMiddleware::class)->group(function(){

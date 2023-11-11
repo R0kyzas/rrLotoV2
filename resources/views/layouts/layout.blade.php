@@ -86,7 +86,11 @@
                     {{ session('success') }}
                 </div>
             @endif
-    
+            @if(request('status') === 'success')
+                <div class="alert alert-success mt-3" role="alert">
+                    Payment completed successfully
+                </div>
+            @endif
             @if(session('error'))
                 <div class="alert alert-danger mt-3" role="alert">
                     {{ session('error') }}

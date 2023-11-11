@@ -26,8 +26,8 @@ class PaymentController extends Controller
                 'transactionId' => $orderNr,
                 'amount' => $amount / 100,
                 'currency' => 'EUR',
-                'returnUrl' => url("/profile"),
-                'cancelUrl' => url("/cancel"),
+                'returnUrl' => url("/profile?status=success"),
+                'cancelUrl' => url("/profile/cancel/$orderNr"),
                 'notifyUrl' => url("/paysera/notification"),
             ]
         )->send();
@@ -36,6 +36,19 @@ class PaymentController extends Controller
             $response->redirect();
         } else {
             echo $response->getMessage();
+        }
+    }
+
+    public function cancelOrder($orderNr)
+    {
+        $order = Order::where('order_nr', '=', $orderNr)->first();
+
+        if($order)
+        {
+            $order->active = 2;
+            $order->save();
+
+            return redirect()->route('profile.view')->with('error', 'Payment canceled');
         }
     }
 
