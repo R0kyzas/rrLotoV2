@@ -50,7 +50,7 @@ class TicketController extends Controller
 
                 if($finalAmount >= 30 && !$isValidDiscount)
                 {
-                    $discountAmount = $finalAmount * 0.;
+                    $discountAmount = $finalAmount * 0.2;
                 }else {
                     $discountAmount = $finalAmount;
                 }
