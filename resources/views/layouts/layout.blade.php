@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="verify-paysera" content="c555aa1694a558eab6dfbea79a94837f">
     <title>@yield('title')</title>
 
     <!-- Fonts -->
