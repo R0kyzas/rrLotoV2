@@ -29,7 +29,7 @@ class PaymentController extends Controller
                 'returnUrl' => url("/profile?status=success"),
                 'cancelUrl' => url("/profile/cancel/$orderNr"),
                 'notifyUrl' => url("/paysera/notification"),
-                'test' => 0,
+                'testMode' => false,
             ]
         )->send();
 
