@@ -47,12 +47,19 @@ class TicketController extends Controller
                 if ($isValidDiscount && $ticketPrice->price) {
                     $finalAmount *= (1 - $isValidDiscount->percentage / 100);
                 }
+
+                if($finalAmount >= 30 && !$isValidDiscount)
+                {
+                    $discountAmount = $finalAmount * 0.;
+                }else {
+                    $discountAmount = $finalAmount;
+                }
     
                 $order = Order::create([
                     $request->validated(),
                     'ticket_quantity' => $request->ticket_quantity,
                     'order_nr' => $this->getRandomOrderNumber(),
-                    'final_price' => $finalAmount * 100,
+                    'final_price' => $discountAmount * 100,
                     'payment_method' => $request->payment_method,
                     'first_name' => $request->first_name,
                     'last_name' => $request->last_name,
@@ -60,7 +67,7 @@ class TicketController extends Controller
                 ]);
 
                 for ($i=0; $i < $request->ticket_quantity; $i++) {
-                    $ticket = Ticket::create([
+                    Ticket::create([
                         'order_id' => $order->id,
                         'ticket_number' => $this->generateUniqueTicketNumber(),
                     ]);
