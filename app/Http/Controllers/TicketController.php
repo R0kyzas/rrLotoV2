@@ -59,7 +59,7 @@ class TicketController extends Controller
                     $request->validated(),
                     'ticket_quantity' => $request->ticket_quantity,
                     'order_nr' => $this->getRandomOrderNumber(),
-                    'final_price' => $discountAmount * 100,
+                    'final_price' => $finalAmount - $discountAmount * 100,
                     'payment_method' => $request->payment_method,
                     'first_name' => $request->first_name,
                     'last_name' => $request->last_name,
